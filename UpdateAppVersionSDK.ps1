@@ -4,8 +4,8 @@
 # 2.) Go to your projects property page in VS
 # 3.) Find Build -> Events -> Pre-build event
 # 4.) Paste one of the below commands depending on what version of Powershell you have
-# For PS core: pwsh -File "$(ProjectDir)UpdateAppVersion.ps1"
-# For PS 5.1: powershell -File "$(ProjectDir)UpdateAppVersion.ps1"
+# For PS core: pwsh -File "$(ProjectDir)UpdateAppVersionSDK.ps1"
+# For PS 5.1: powershell -File "$(ProjectDir)UpdateAppVersionSDK.ps1"
 #####################################################################
 
 # Read the current version tag in the csproj file and update to todays date and increment the build number
@@ -32,7 +32,7 @@ if($content -match '<Version>(\d{4})\.(\d{2})\.(\d{2})\.(\d+)</Version>'){
 
     "Incrementing version <Version>$year.$month.$day.$($build + 1)</Version>"
     $content = $content -replace '<Version>.+</Version>', "<Version>$year.$month.$day.$($build + 1)</Version>"
-    Set-Content -Path $csproj.FullName -Value $content -Force
+    Set-Content -Path $csproj.FullName -Value $content -NoNewline -Force
 
     return
 }
@@ -46,7 +46,7 @@ if($content -match '<Version>.+</Version>'){
 
     "Formatting version tag<Version>$year.$month.$day.$build</Version>"
     $content = $content -replace '<Version>.+</Version>', "<Version>$year.$month.$day.$build</Version>"
-    Set-Content -Path $csproj.FullName -Value $content -Force
+    Set-Content -Path $csproj.FullName -Value $content -NoNewline -Force
 
     return
 }
@@ -61,4 +61,4 @@ $day = Get-Date -Format "dd"
 $split = $content -split '</PropertyGroup>'
 $split[0] += "    <Version>$year.$month.$day.$build</Version>`n"
 $content = $split -join '    </PropertyGroup>'
-Set-Content -Path $csproj.FullName -Value $content -Force
+Set-Content -Path $csproj.FullName -Value $content -NoNewline -Force
